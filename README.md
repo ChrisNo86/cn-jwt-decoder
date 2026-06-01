@@ -4,6 +4,15 @@ Professional JSON Web Token (JWT) Decoder built with HTML, CSS and JavaScript.
 
 A fast, lightweight and privacy-friendly tool for decoding and inspecting JWT tokens directly in the browser. No data is transmitted to external servers.
 
+![Version](https://img.shields.io/badge/version-1.0.0-00d4ff)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-active-success)
+![Architecture](https://img.shields.io/badge/Architecture-SPA-blue)
+![Framework](https://img.shields.io/badge/Framework-Vanilla-JS-orange)
+![Deployment](https://img.shields.io/badge/Deployment-GitHub-Pages-success)
+![Privacy](https://img.shields.io/badge/Privacy-Focused-purple)
+![Performance](https://img.shields.io/badge/Lighthouse-95+-orange)
+
 ---
 
 ## Features
@@ -38,33 +47,31 @@ A fast, lightweight and privacy-friendly tool for decoding and inspecting JWT to
 
 ---
 
-## Technology Stack
+## 🚀 Built With
 
-| Technology        | Usage      |
-| ----------------- | ---------- |
-| HTML5             | Structure  |
-| CSS3              | Styling    |
-| JavaScript (ES6+) | Logic      |
-| GitHub Pages      | Deployment |
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
 ---
 
-## Project Structure
+## ✨ Features
 
-```text
-cn-jwt-decoder/
-│
-├── index.html
-├── style.css
-├── main.js
-│
-├── assets/
-│
-├── README.md
-├── LICENSE
-└── .gitignore
+- Decode JWT Headers
+- Decode JWT Payloads
+- Expiration Detection
+- Status Validation
+- Syntax Highlighting
+- Copy to Clipboard
+- Responsive Design
+- URL Sharing
+- Client-Side Processing
 ```
+## 📸 Screenshot
 
+![JWT Decoder](assets/screenshot.png)
 ---
 
 ## Installation
@@ -72,7 +79,7 @@ cn-jwt-decoder/
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/cn-jwt-decoder.git
+git clone https://github.com/ChrisNo86/cn-jwt-decoder.git
 ```
 
 Open:
@@ -171,4 +178,14 @@ MIT License
 
 CN Interactive Systems
 
+https://christian-noack.com/
+
+[licence](mailto:admin@christian-noack.com)
+
 Building modern web applications, developer tools and interactive systems.
+
+- Frontend Development
+- Full Stack Applications
+- SaaS Platforms
+- Developer Tools
+- Interactive Systems
