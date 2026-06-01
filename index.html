@@ -33,20 +33,22 @@
 
         <section class="card">
 
-            <label for="jwtInput">
-                JWT Token
-            </label>
+            <div class="card-header">
+                <h2>JWT Token</h2>
+
+                <div class="action-bar">
+                    <button id="exampleBtn">
+                        Load Example
+                    </button>
+
+                    <button id="clearBtn">
+                        Clear
+                    </button>
+                </div>
+            </div>
 
             <textarea id="jwtInput" placeholder="Paste JWT token..."></textarea>
-            <div class="action-bar">
-                <button id="exampleBtn">
-                    Load Example
-                </button>
 
-                <button id="clearBtn">
-                    Clear
-                </button>
-            </div>
         </section>
 
         <section class="grid">
@@ -91,13 +93,18 @@ Waiting...
 
         <section class="card">
 
-            <h2>Token Status</h2>
+            <h2>Status</h2>
+
+            <span id="statusBadge" class="status-badge">
+                WAITING
+            </span>
 
             <p id="statusOutput">
                 No token loaded.
             </p>
 
         </section>
+
         <section class="card">
 
             <h2>Token Details</h2>
@@ -107,6 +114,7 @@ Waiting...
             </div>
 
         </section>
+
     </main>
 
 </body>

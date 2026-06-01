@@ -104,6 +104,51 @@ button {
     margin-top: .75rem;
 }
 
+.action-bar {
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+}
+
+.status-badge {
+    display: inline-flex;
+    padding: .5rem 1rem;
+    border-radius: 999px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: .875rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+}
+
+.details-grid {
+    display: grid;
+    gap: .75rem;
+}
+
+.details-item {
+    padding: .75rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .03);
+}
+
+@media (max-width: 480px) {
+
+    .card-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-bar {
+        width: 100%;
+    }
+
+    .action-bar button {
+        flex: 1;
+    }
+
+}
+
 @media (min-width: 900px) {
     .grid {
         grid-template-columns: 1fr 1fr;

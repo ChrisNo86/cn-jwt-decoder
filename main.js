@@ -1,53 +1,61 @@
-const jwtInput = document.querySelector("#jwtInput");
-const headerOutput = document.querySelector("#headerOutput");
-const payloadOutput = document.querySelector("#payloadOutput");
-const statusOutput = document.querySelector("#statusOutput");
-const copyButtons = document.querySelectorAll(".copy-btn");
-const exampleBtn = document.querySelector("#exampleBtn");
-const clearBtn = document.querySelector("#clearBtn");
-const detailsOutput = document.querySelector("#detailsOutput");
+const jwtInput =
+    document.querySelector("#jwtInput");
 
-jwtInput.addEventListener("input", decodeToken);
-exampleBtn.addEventListener(
-    "click",
-    loadExampleToken
-);
+const headerOutput =
+    document.querySelector("#headerOutput");
 
-clearBtn.addEventListener(
-    "click",
-    clearDecoder
-);
-exampleBtn.addEventListener("click", () => {
-    const exampleToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNzE0NjI4ODAwLCJleHAiOjE3MTQ2Mjk0MDB9.iQy4oQ87mP83w34yU4U8u4l4b3i3i3i3i3i3i3i3i3i3i3";
+const payloadOutput =
+    document.querySelector("#payloadOutput");
 
-    jwtInput.value = exampleToken;
-    decodeToken();
-});
+const statusOutput =
+    document.querySelector("#statusOutput");
 
-clearBtn.addEventListener("click", () => {
-    jwtInput.value = "";
-    resetOutputs();
-});
+const statusBadge =
+    document.querySelector("#statusBadge");
 
-copyButtons.forEach(button => {
+const detailsOutput =
+    document.querySelector("#detailsOutput");
 
-    button.addEventListener(
-        "click",
-        () => {
-            copyContent(
-                button.dataset.copy,
-                button
-            );
-        }
+const exampleBtn =
+    document.querySelector("#exampleBtn");
+
+const clearBtn =
+    document.querySelector("#clearBtn");
+
+const copyButtons =
+    document.querySelectorAll(".copy-btn");
+
+initialize();
+
+function initialize() {
+    bindEvents();
+    loadTokenFromUrl();
+}
+
+function bindEvents() {
+    jwtInput.addEventListener(
+        "input",
+        decodeToken
     );
 
-});
-function clearDecoder() {
-    jwtInput.value = "";
-    resetOutputs();
-    detailsOutput.textContent =
-        "Waiting...";
+    exampleBtn.addEventListener(
+        "click",
+        loadExampleToken
+    );
+
+    clearBtn.addEventListener(
+        "click",
+        clearDecoder
+    );
+
+    copyButtons.forEach(button => {
+        button.addEventListener(
+            "click",
+            () => handleCopy(button)
+        );
+    });
 }
+
 function decodeToken() {
     const token = jwtInput.value.trim();
 
@@ -57,102 +65,211 @@ function decodeToken() {
     }
 
     try {
-        const [header, payload] = token.split(".");
+        const [header, payload] =
+            token.split(".");
 
-        showHeader(header);
-        showPayload(payload);
+        const headerData =
+            parseJwtPart(header);
+
         const payloadData =
             parseJwtPart(payload);
 
-        showDetails(payloadData);
-        showExpiration(payload);
+        renderHeader(headerData);
+        renderPayload(payloadData);
+        renderStatus(payloadData);
+        renderDetails(headerData, payloadData);
+
+        updateUrl(token);
 
     } catch {
         showError();
     }
 }
-function showDetails(payload) {
-    const issuedAt = payload.iat
-        ? new Date(payload.iat * 1000)
-        : "N/A";
 
-    const expiresAt = payload.exp
-        ? new Date(payload.exp * 1000)
-        : "N/A";
+function parseJwtPart(part) {
+    const normalized =
+        part.replace(/-/g, "+")
+            .replace(/_/g, "/");
 
-    detailsOutput.innerHTML = `
-        <p>Issued At: ${issuedAt}</p>
-        <p>Expires At: ${expiresAt}</p>
-    `;
-}
-function showHeader(value) {
-    headerOutput.textContent = formatJson(parseJwtPart(value));
+    return JSON.parse(atob(normalized));
 }
 
-function showPayload(value) {
-    payloadOutput.textContent = formatJson(parseJwtPart(value));
+function renderHeader(data) {
+    headerOutput.textContent =
+        JSON.stringify(data, null, 2);
 }
 
-function showExpiration(value) {
-    const payload = parseJwtPart(value);
+function renderPayload(data) {
+    payloadOutput.textContent =
+        JSON.stringify(data, null, 2);
+}
+
+function renderStatus(payload) {
 
     if (!payload.exp) {
-        statusOutput.textContent = "No expiration found.";
+        statusBadge.textContent =
+            "NO EXP";
+
+        statusOutput.textContent =
+            "Token has no expiration.";
         return;
     }
 
-    const expiry = new Date(payload.exp * 1000);
-    const expired = expiry < new Date();
+    const expiresAt =
+        new Date(payload.exp * 1000);
 
-    statusOutput.textContent = expired
-        ? `Expired: ${expiry}`
-        : `Valid until: ${expiry}`;
+    const expired =
+        expiresAt < new Date();
+
+    statusBadge.textContent =
+        expired ? "EXPIRED" : "VALID";
+
+    statusOutput.textContent =
+        expired
+            ? `Expired on ${expiresAt}`
+            : `Valid until ${expiresAt}`;
 }
 
-function parseJwtPart(part) {
-    const base64 = part.replace(/-/g, "+")
-        .replace(/_/g, "/");
+function renderDetails(
+    header,
+    payload
+) {
 
-    return JSON.parse(atob(base64));
+    const issuedAt =
+        formatDate(payload.iat);
+
+    const expiresAt =
+        formatDate(payload.exp);
+
+    detailsOutput.innerHTML = `
+        <div class="details-grid">
+
+            <div class="details-item">
+                Algorithm: ${header.alg ?? "Unknown"}
+            </div>
+
+            <div class="details-item">
+                Type: ${header.typ ?? "Unknown"}
+            </div>
+
+            <div class="details-item">
+                Issued At: ${issuedAt}
+            </div>
+
+            <div class="details-item">
+                Expires At: ${expiresAt}
+            </div>
+
+        </div>
+    `;
 }
 
-function formatJson(data) {
-    return JSON.stringify(data, null, 2);
+function formatDate(value) {
+
+    if (!value) {
+        return "N/A";
+    }
+
+    return new Date(
+        value * 1000
+    ).toLocaleString();
 }
 
-function copyContent(id) {
-    const element = document.getElementById(id);
+async function handleCopy(button) {
 
-    navigator.clipboard.writeText(
-        element.textContent
+    const target =
+        document.getElementById(
+            button.dataset.copy
+        );
+
+    await navigator.clipboard.writeText(
+        target.textContent
     );
+
+    const label =
+        button.textContent;
+
+    button.textContent =
+        "Copied ✓";
+
+    setTimeout(() => {
+        button.textContent = label;
+    }, 1500);
+}
+
+function loadExampleToken() {
+
+    jwtInput.value =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQ04gSW50ZXJhY3RpdmUgU3lzdGVtcyIsImlhdCI6MTcxNzIwMDAwMCwiZXhwIjoyMjAwMDAwMDAwfQ.signature";
+
+    decodeToken();
+}
+
+function clearDecoder() {
+    jwtInput.value = "";
+    resetOutputs();
+    history.replaceState(
+        {},
+        "",
+        location.pathname
+    );
+}
+
+function updateUrl(token) {
+
+    const url =
+        new URL(location.href);
+
+    url.searchParams.set(
+        "token",
+        token
+    );
+
+    history.replaceState(
+        {},
+        "",
+        url
+    );
+}
+
+function loadTokenFromUrl() {
+
+    const token =
+        new URLSearchParams(
+            location.search
+        ).get("token");
+
+    if (!token) {
+        return;
+    }
+
+    jwtInput.value = token;
+    decodeToken();
 }
 
 function resetOutputs() {
-    headerOutput.textContent = "Waiting...";
-    payloadOutput.textContent = "Waiting...";
-    statusOutput.textContent = "No token loaded.";
+
+    headerOutput.textContent =
+        "Waiting...";
+
+    payloadOutput.textContent =
+        "Waiting...";
+
+    detailsOutput.textContent =
+        "Waiting...";
+
+    statusBadge.textContent =
+        "WAITING";
+
+    statusOutput.textContent =
+        "No token loaded.";
 }
 
 function showError() {
-    statusOutput.textContent = "Invalid JWT.";
-}
 
-async function copyContent(id, button) {
+    statusBadge.textContent =
+        "INVALID";
 
-    const element =
-        document.getElementById(id);
-
-    await navigator.clipboard.writeText(
-        element.textContent
-    );
-
-    const original =
-        button.textContent;
-
-    button.textContent = "Copied ✓";
-
-    setTimeout(() => {
-        button.textContent = original;
-    }, 1500);
+    statusOutput.textContent =
+        "Invalid JWT token.";
 }
