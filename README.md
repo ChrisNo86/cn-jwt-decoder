@@ -133,7 +133,7 @@ No build process required.
 Add screenshots here.
 
 ```text
-assets/screenshots/
+assets/preview.png/
 ```
 
 ---
