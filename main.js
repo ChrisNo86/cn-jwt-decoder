@@ -209,7 +209,7 @@ function renderStatus(payload) {
         "VALID";
 
     statusOutput.textContent =
-        `Valid until ${expiresAt.toLocaleString()}`;
+        `Valid until ${expiresAt.toLocaleDateString()} ${expiresAt.toLocaleTimeString()}`;
 }
 
 function renderDetails(
