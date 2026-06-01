@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>CN JWT Decoder</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script defer src="main.js"></script>
+</head>
+
+<body>
+
+    <header class="hero">
+        <div class="container">
+
+            <span class="badge">
+                CN Interactive Systems
+            </span>
+
+            <h1>JWT Decoder</h1>
+
+            <p>
+                Decode and inspect JSON Web Tokens instantly.
+            </p>
+
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="card">
+
+            <label for="jwtInput">
+                JWT Token
+            </label>
+
+            <textarea id="jwtInput" placeholder="Paste JWT token..."></textarea>
+
+        </section>
+
+        <section class="grid">
+
+            <article class="card">
+
+                <div class="card-header">
+
+                    <h2>Header</h2>
+
+                    <button class="copy-btn" data-copy="headerOutput">
+                        Copy
+                    </button>
+
+                </div>
+
+                <pre id="headerOutput">
+Waiting...
+            </pre>
+
+            </article>
+
+            <article class="card">
+
+                <div class="card-header">
+
+                    <h2>Payload</h2>
+
+                    <button class="copy-btn" data-copy="payloadOutput">
+                        Copy
+                    </button>
+
+                </div>
+
+                <pre id="payloadOutput">
+Waiting...
+            </pre>
+
+            </article>
+
+        </section>
+
+        <section class="card">
+
+            <h2>Token Status</h2>
+
+            <p id="statusOutput">
+                No token loaded.
+            </p>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>
