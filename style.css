@@ -13,6 +13,12 @@
     box-sizing: border-box;
 }
 
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
 body {
     min-height: 100vh;
     font-family: Inter, sans-serif;
@@ -51,7 +57,7 @@ body {
 .grid {
     display: grid;
     gap: 1.5rem;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
 }
 
 .card {
@@ -69,7 +75,7 @@ label {
 
 textarea {
     width: 100%;
-    min-height: 220px;
+    min-height: 160px;
     resize: vertical;
     border: none;
     outline: none;
@@ -86,9 +92,12 @@ textarea {
 }
 
 pre {
+    min-height: 180px;
+    padding: 1.25rem;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, .2);
     overflow-x: auto;
-    white-space: pre-wrap;
-    word-break: break-word;
+    line-height: 1.8;
 }
 
 button {
@@ -104,21 +113,64 @@ button {
     margin-top: .75rem;
 }
 
+.json-key {
+    color: #38bdf8;
+}
+
+.json-string {
+    color: #a3e635;
+}
+
+.json-number {
+    color: #c084fc;
+}
+
 .action-bar {
     display: flex;
     gap: .75rem;
     flex-wrap: wrap;
 }
 
+.details-item {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1rem;
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, .03);
+}
+
 .status-badge {
+
     display: inline-flex;
-    padding: .5rem 1rem;
+    align-items: center;
+    gap: .5rem;
+
+    padding: .65rem 1.2rem;
+
     border-radius: 999px;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    font-size: .875rem;
-    font-weight: 600;
-    border: 1px solid var(--border);
+
+    font-weight: 700;
+
+    margin: 1rem 0;
+
+    border: 1px solid;
+}
+
+.status-valid {
+    color: #22c55e;
+    border-color: rgba(34, 197, 94, .4);
+    background: rgba(34, 197, 94, .1);
+}
+
+.status-invalid {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, .4);
+    background: rgba(239, 68, 68, .1);
 }
 
 .details-grid {

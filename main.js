@@ -33,6 +33,7 @@ function initialize() {
 }
 
 function bindEvents() {
+
     jwtInput.addEventListener(
         "input",
         decodeToken
@@ -49,15 +50,20 @@ function bindEvents() {
     );
 
     copyButtons.forEach(button => {
+
         button.addEventListener(
             "click",
             () => handleCopy(button)
         );
+
     });
+
 }
 
 function decodeToken() {
-    const token = jwtInput.value.trim();
+
+    const token =
+        jwtInput.value.trim();
 
     if (!token) {
         resetOutputs();
@@ -65,53 +71,112 @@ function decodeToken() {
     }
 
     try {
-        const [header, payload] =
+
+        const parts =
             token.split(".");
 
+        if (parts.length < 2) {
+            throw new Error();
+        }
+
         const headerData =
-            parseJwtPart(header);
+            parseJwtPart(parts[0]);
 
         const payloadData =
-            parseJwtPart(payload);
+            parseJwtPart(parts[1]);
 
         renderHeader(headerData);
         renderPayload(payloadData);
         renderStatus(payloadData);
-        renderDetails(headerData, payloadData);
+        renderDetails(
+            headerData,
+            payloadData
+        );
 
         updateUrl(token);
 
-    } catch {
+    } catch (error) {
+
+        console.error(error);
+
         showError();
+
     }
+
 }
 
 function parseJwtPart(part) {
-    const normalized =
+
+    let normalized =
         part.replace(/-/g, "+")
             .replace(/_/g, "/");
 
-    return JSON.parse(atob(normalized));
+    while (normalized.length % 4) {
+        normalized += "=";
+    }
+
+    const decoded =
+        decodeURIComponent(
+            Array
+                .from(atob(normalized))
+                .map(char =>
+                    `%${char.charCodeAt(0)
+                        .toString(16)
+                        .padStart(2, "0")}`
+                )
+                .join("")
+        );
+
+    return JSON.parse(decoded);
 }
 
 function renderHeader(data) {
-    headerOutput.textContent =
-        JSON.stringify(data, null, 2);
+
+    headerOutput.innerHTML =
+        createHighlightedJson(data);
 }
 
 function renderPayload(data) {
-    payloadOutput.textContent =
+
+    payloadOutput.innerHTML =
+        createHighlightedJson(data);
+}
+
+function createHighlightedJson(data) {
+
+    const json =
         JSON.stringify(data, null, 2);
+
+    return json
+        .replace(
+            /"([^"]+)":/g,
+            '<span class="json-key">"$1"</span>:'
+        )
+        .replace(
+            /: "([^"]*)"/g,
+            ': <span class="json-string">"$1"</span>'
+        )
+        .replace(
+            /: (\d+)/g,
+            ': <span class="json-number">$1</span>'
+        )
+        .replace(/\n/g, "<br>")
+        .replace(/ {2}/g, "&nbsp;&nbsp;");
 }
 
 function renderStatus(payload) {
 
+    statusBadge.className =
+        "status-badge";
+
     if (!payload.exp) {
+
         statusBadge.textContent =
             "NO EXP";
 
         statusOutput.textContent =
             "Token has no expiration.";
+
         return;
     }
 
@@ -121,13 +186,30 @@ function renderStatus(payload) {
     const expired =
         expiresAt < new Date();
 
+    if (expired) {
+
+        statusBadge.classList.add(
+            "status-invalid"
+        );
+
+        statusBadge.textContent =
+            "EXPIRED";
+
+        statusOutput.textContent =
+            `Expired on ${expiresAt.toLocaleString()}`;
+
+        return;
+    }
+
+    statusBadge.classList.add(
+        "status-valid"
+    );
+
     statusBadge.textContent =
-        expired ? "EXPIRED" : "VALID";
+        "VALID";
 
     statusOutput.textContent =
-        expired
-            ? `Expired on ${expiresAt}`
-            : `Valid until ${expiresAt}`;
+        `Valid until ${expiresAt.toLocaleString()}`;
 }
 
 function renderDetails(
@@ -145,19 +227,23 @@ function renderDetails(
         <div class="details-grid">
 
             <div class="details-item">
-                Algorithm: ${header.alg ?? "Unknown"}
+                <span>Algorithm</span>
+                <strong>${header.alg ?? "Unknown"}</strong>
             </div>
 
             <div class="details-item">
-                Type: ${header.typ ?? "Unknown"}
+                <span>Type</span>
+                <strong>${header.typ ?? "Unknown"}</strong>
             </div>
 
             <div class="details-item">
-                Issued At: ${issuedAt}
+                <span>Issued At</span>
+                <strong>${issuedAt}</strong>
             </div>
 
             <div class="details-item">
-                Expires At: ${expiresAt}
+                <span>Expires At</span>
+                <strong>${expiresAt}</strong>
             </div>
 
         </div>
@@ -182,19 +268,31 @@ async function handleCopy(button) {
             button.dataset.copy
         );
 
-    await navigator.clipboard.writeText(
-        target.textContent
-    );
+    try {
 
-    const label =
-        button.textContent;
+        await navigator.clipboard.writeText(
+            target.textContent
+        );
 
-    button.textContent =
-        "Copied ✓";
+        const original =
+            button.textContent;
 
-    setTimeout(() => {
-        button.textContent = label;
-    }, 1500);
+        button.textContent =
+            "Copied ✓";
+
+        setTimeout(() => {
+
+            button.textContent =
+                original;
+
+        }, 1500);
+
+    } catch {
+
+        button.textContent =
+            "Failed";
+
+    }
 }
 
 function loadExampleToken() {
@@ -206,8 +304,11 @@ function loadExampleToken() {
 }
 
 function clearDecoder() {
+
     jwtInput.value = "";
+
     resetOutputs();
+
     history.replaceState(
         {},
         "",
@@ -243,7 +344,9 @@ function loadTokenFromUrl() {
         return;
     }
 
-    jwtInput.value = token;
+    jwtInput.value =
+        token;
+
     decodeToken();
 }
 
@@ -258,6 +361,9 @@ function resetOutputs() {
     detailsOutput.textContent =
         "Waiting...";
 
+    statusBadge.className =
+        "status-badge";
+
     statusBadge.textContent =
         "WAITING";
 
@@ -267,9 +373,21 @@ function resetOutputs() {
 
 function showError() {
 
+    statusBadge.className =
+        "status-badge status-invalid";
+
     statusBadge.textContent =
         "INVALID";
 
     statusOutput.textContent =
         "Invalid JWT token.";
+
+    headerOutput.textContent =
+        "Waiting...";
+
+    payloadOutput.textContent =
+        "Waiting...";
+
+    detailsOutput.textContent =
+        "Waiting...";
 }
